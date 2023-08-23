@@ -39,6 +39,7 @@ def drop_and_create_tables(connection):
     create_player = """
         CREATE TABLE players (
         puuid TEXT PRIMARY KEY,
+        match_id UUID REFERENCES matchInfo(match_id), -- Foreign Key to matchInfo
         game_name TEXT,
         tag_line VARCHAR(10),
         team_id TEXT,

@@ -49,20 +49,24 @@ def insert_match_info(cursor, data):
 
 def insert_players(cursor, data):
     query = """
-        INSERT INTO players (
-            puuid, game_name, tag_line, team_id, party_id, 
-            character_id, score, rounds_played, kills, deaths, assists, 
-            playtime_millis, grenade_casts, ability1_casts, ability2_casts, 
-            ultimate_casts, competitive_tier, is_observer, player_card, player_title
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        ON CONFLICT (puuid) DO NOTHING;
-        """
+            INSERT INTO players (
+                puuid, match_id, game_name, tag_line, team_id, party_id, 
+                character_id, score, rounds_played, kills, deaths, assists, 
+                playtime_millis, grenade_casts, ability1_casts, ability2_casts, 
+                ultimate_casts, competitive_tier, is_observer, player_card, player_title
+            ) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (puuid) DO NOTHING;
+            """
+
+    match_id = data['matchInfo']['matchId']
     for player_data in data['players']:
         print(player_data)
         stats = player_data.get('stats') or {}
         abilityCasts = stats.get('abilityCasts') or {}
+
         cursor.execute(query, (
-            player_data.get('puuid'), player_data.get('gameName'),
+            player_data.get('puuid'), match_id, player_data.get('gameName'),
             player_data.get('tagLine'), player_data.get('teamId'),
             player_data.get('partyId'), player_data.get('characterId'),
             stats.get('score'), stats.get('roundsPlayed'),
